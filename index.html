@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boas-Vindas · Winner IA</title>
+<style>
+  :root{
+    --paper:#FEFCF6; --card:#FFFFFF; --ink:#1c1c1e; --gray:#8a8a8e; --gray2:#a9a7a0;
+    --hair:#ECE9E0; --gold:#C8A24A; --gold-deep:#A6873F; --gold-soft:#FBEFC9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background:var(--paper);color:var(--ink);line-height:1.5;padding:40px 16px}
+  a{color:inherit;text-decoration:none}
+  .note{max-width:680px;margin:0 auto;background:var(--card);border:1px solid var(--hair);
+    border-radius:18px;box-shadow:0 10px 40px rgba(60,50,20,.06);padding:46px 46px 36px}
+  /* header */
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+  .brand svg{width:34px;height:34px}
+  .brand .wm{font-weight:800;font-size:19px;letter-spacing:-.02em}
+  .brand .wm i{color:var(--gold);font-style:normal}
+  .date{color:var(--gray);font-size:14px;font-weight:600;margin-bottom:7px}
+  h1{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.14}
+  .lead{color:#48474b;font-size:18px;margin-top:11px}
+  .rule{height:1px;background:var(--hair);border:none;margin:26px 0}
+  .eab{font-size:13.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-deep);
+    display:flex;align-items:center;gap:9px;margin-bottom:14px}
+  .eab .sq{width:16px;height:16px;border-radius:5px;background:var(--gold)}
+  /* steps as notes checklist rows */
+  .step{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--hair);transition:opacity .15s;cursor:pointer;width:100%;text-align:left;background:none;border-left:none;border-right:none;border-top:none;font:inherit;color:inherit}
+  .step:last-child{border-bottom:none}
+  .step:hover{opacity:.72}
+  .ico{width:50px;height:50px;border-radius:13px;background:var(--gold-soft);display:grid;place-items:center;
+    font-size:24px;flex:none}
+  .step .c{flex:1;min-width:0}
+  .step .n{font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-deep)}
+  .step h3{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-top:2px}
+  .step p{font-size:15.5px;color:var(--gray);margin-top:5px}
+  .row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .go{font-size:15px;font-weight:700;color:var(--gold-deep);display:inline-flex;align-items:center;gap:6px}
+  .go svg{transition:transform .15s}
+  .step:hover .go svg{transform:translateX(3px)}
+  .key{font-size:13.5px;color:var(--gray);display:inline-flex;align-items:center;gap:5px}
+  .chev{align-self:center;color:var(--gray2);flex:none}
+  .foot{color:var(--gray2);font-size:13px;margin-top:26px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(28,28,30,.45);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+  .overlay.open{display:flex}
+  .modal{background:var(--card);border-radius:18px;max-width:560px;width:100%;max-height:88vh;overflow-y:auto;
+    padding:32px 34px 30px;box-shadow:0 24px 70px rgba(30,20,0,.28);position:relative;
+    animation:pop .18s ease}
+  @keyframes pop{from{transform:translateY(8px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+  .close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;
+    background:#F0EEE7;color:#555;font-size:17px;cursor:pointer;display:grid;place-items:center;line-height:1}
+  .close:hover{background:#E6E3D9}
+  .modal .mk{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep)}
+  .modal h2{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:5px}
+  .modal .intro{font-size:16px;color:#48474b;margin-top:13px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 4px}
+  .flow span{font-size:13.5px;font-weight:700;background:var(--gold-soft);color:var(--gold-deep);padding:6px 12px;border-radius:20px}
+  .flow b{color:var(--gray2);align-self:center;font-weight:700}
+  /* implementation timeline */
+  .steps-list{margin-top:20px;display:flex;flex-direction:column}
+  .tl{display:flex;gap:15px;padding-bottom:20px;position:relative}
+  .tl:not(:last-child)::before{content:"";position:absolute;left:16px;top:34px;bottom:0;width:2px;background:var(--hair)}
+  .tl .num{width:34px;height:34px;border-radius:50%;background:var(--gold-soft);color:var(--gold-deep);
+    font-weight:800;font-size:15px;display:grid;place-items:center;flex:none;z-index:1;border:2px solid var(--card)}
+  .tl .tc{flex:1;min-width:0;padding-top:3px}
+  .tl .tc h4{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+  .tl .tc p{font-size:14.5px;color:var(--gray);margin-top:4px}
+  .tl.done .num{background:var(--gold);color:#fff}
+  .mnote{font-size:14.5px;color:var(--gray);margin-top:8px;background:#FAF8F1;border-radius:11px;padding:13px 15px}
+  .mnote b{color:var(--ink)}
+  @media(max-width:520px){.note{padding:30px 22px}}
+</style>
+</head>
+<body>
+  <div class="note">
+    <div class="brand">
+      <svg viewBox="0 0 100 100"><path d="M16 15 L35 15 L50 70 L65 15 L84 15 L60 92 L40 92 Z" fill="#101010"></path><circle cx="83" cy="22" r="9" fill="#C8A24A"></circle></svg>
+      <span class="wm">winner<i>.ia</i></span>
+    </div>
+
+    <div class="date">Programa de Aceleração em I.A.</div>
+    <h1>Bem-vindo à mentoria Winner IA</h1>
+    <p class="lead">Tudo o que você precisa para começar com o pé direito. Acesse o curso, o manual, preencha o formulário e entenda como a implementação funciona.</p>
+
+    <hr class="rule">
+
+    <div class="eab"><span class="sq"></span>Comece por aqui</div>
+
+    <a class="step" href="https://members.kiwify.com/?club=04f64c9d-075c-4543-b44f-5fdeca907f51" target="_blank" rel="noopener">
+      <div class="ico">🎓</div>
+      <div class="c">
+        <div class="n">Passo 1</div>
+        <h3>Curso Claude Sem Código</h3>
+        <p>O básico do Claude na prática, em aulas rápidas e diretas ao ponto. Assista antes da primeira consultoria.</p>
+        <div class="row">
+          <span class="go">Acessar o curso <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="key">🔑 Senha: seu login Kiwify</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="step" href="https://materialalunos.winneria.com.br/" target="_blank" rel="noopener">
+      <div class="ico">📘</div>
+      <div class="c">
+        <div class="n">Passo 2</div>
+        <h3>Manual do Aluno</h3>
+        <p>Material escrito com o essencial: Claude, Cowork, Code e os conceitos-chave da mentoria.</p>
+        <div class="row">
+          <span class="go">Acessar o manual <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="key">🔑 Senha: programaia2026</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="step" href="https://docs.google.com/forms/d/e/1FAIpQLSc5ecOuqW7LSJVboXmm_FwTZLfCp_kBeAqaUi3JNi4pW6uXoA/viewform" target="_blank" rel="noopener">
+      <div class="ico">📝</div>
+      <div class="c">
+        <div class="n">Passo 3</div>
+        <h3>Formulário do Mapa Estratégico</h3>
+        <p>As perguntas que são a base do seu plano de mentoria. Preencha antes da primeira consultoria.</p>
+        <div class="row">
+          <span class="go">Preencher o formulário <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+    </a>
+
+    <hr class="rule">
+
+    <div class="eab"><span class="sq"></span>Entenda a implementação</div>
+
+    <button class="step" onclick="openModal()">
+      <div class="ico">🛠️</div>
+      <div class="c">
+        <div class="n">Como funciona</div>
+        <h3>Como funciona a implementação</h3>
+        <p>Do projeto à entrega: como desenvolvemos, validamos com você e entregamos, passo a passo.</p>
+        <div class="row">
+          <span class="go">Abrir explicação <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
+    <div class="foot">
+      <span>winner<i style="color:var(--gold);font-style:normal">.ia</i> · Material de Boas-Vindas</span>
+      <span>Programa de Aceleração em I.A.</span>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="close" onclick="closeModal()" aria-label="Fechar">✕</button>
+      <div class="mk">Mentoria Winner IA</div>
+      <h2>Como funciona a implementação</h2>
+      <p class="intro">Cada projeto caminha em etapas, sempre com a sua aprovação antes de avançar. Você acompanha de perto e nunca fica no escuro: apresentamos, validamos e só então seguimos.</p>
+
+      <div class="flow">
+        <span>Projeto</span><b>→</b><span>Aprovação</span><b>→</b><span>Desenvolvimento</span><b>→</b><span>Validação</span><b>→</b><span>Entrega</span>
+      </div>
+
+      <div class="steps-list">
+        <div class="tl">
+          <div class="num">1</div>
+          <div class="tc">
+            <h4>Elaboramos e apresentamos o projeto</h4>
+            <p>Montamos a proposta e apresentamos para você. Com a sua aprovação, iniciamos o desenvolvimento.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="num">2</div>
+          <div class="tc">
+            <h4>Criamos o cronograma de entregas</h4>
+            <p>Definimos as etapas e os prazos, e iniciamos o desenvolvimento seguindo esse cronograma.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="num">3</div>
+          <div class="tc">
+            <h4>Agendamos uma call para te mostrar</h4>
+            <p>Apresentamos o que foi desenvolvido. Com a sua aprovação dos detalhes, prosseguimos.</p>
+          </div>
+        </div>
+        <div class="tl done">
+          <div class="num">4</div>
+          <div class="tc">
+            <h4>Entrega final</h4>
+            <p>Apresentamos o resultado e entregamos um manual de uso com todos os detalhes.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="mnote">💬 <b>Dúvidas rápidas?</b> Manda no grupo — a gente acompanha de perto em cada etapa.</p>
+    </div>
+  </div>
+
+  <script>
+    function openModal(){document.getElementById('overlay').classList.add('open');document.body.style.overflow='hidden'}
+    function closeModal(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow=''}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  </script>
+</body>
+</html>
